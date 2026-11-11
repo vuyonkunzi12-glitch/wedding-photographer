@@ -1,69 +1,107 @@
-import Image from "next/image";
+// app/page.tsx
+import Image from 'next/image'
+import Link from 'next/link'
+import { getFeaturedShoots } from '@/lib/shoots'
+import { site } from '@/lib/site'
+// import Testimonial from '@/components/Testimonial'
 
-export default function Home() {
+export default async function Home() {
+  const featured = getFeaturedShoots(3)
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
+    <>
+      {/* Hero */}
+      <section className="relative h-[85svh] min-h-[560px]">
         <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
+          src="/hero.jpg"
+          alt="Couple under jacaranda trees, Pretoria"
+          fill
           priority
+          sizes="100vw"
+          className="object-cover"
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-ink/20 to-transparent" />
+        <div className="absolute inset-0 flex flex-col items-center justify-end pb-16 text-center text-white px-6">
+          <p className="font-sans uppercase tracking-[0.2em] text-sm text-jacaranda-100">
+            Pretoria · South Africa
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          <h1 className="font-display text-4xl sm:text-6xl mt-4 max-w-3xl">
+            Wedding photography in Pretoria
+          </h1>
+          <Link
+            href="/contact"
+            className="mt-8 inline-flex items-center rounded-full bg-jade-500 px-7 py-3 font-sans font-medium hover:bg-jade-600 transition"
           >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            Book a consultation
+          </Link>
         </div>
-      </main>
-    </div>
-  );
+      </section>
+
+      {/* Featured shoots */}
+      <section className="bg-jacaranda-50 py-20 px-6">
+        <div className="mx-auto max-w-6xl">
+          <div className="flex items-end justify-between mb-10">
+            <h2 className="font-display text-3xl text-jacaranda-800">Recent work</h2>
+            <Link href="/work" className="font-sans text-jacaranda-600 hover:underline">
+              See all shoots →
+            </Link>
+          </div>
+          <div className="grid gap-6 sm:grid-cols-3">
+            {featured.map(s => (
+              <Link key={s.cover} href={`/work/${slugFor(s)}`} className="group">
+                <div className="relative aspect-[4/5] overflow-hidden rounded-lg">
+                  <Image
+                    src={s.cover}
+                    alt={s.coverAlt}
+                    fill
+                    sizes="(min-width:640px) 33vw, 100vw"
+                    className="object-cover group-hover:scale-[1.03] transition-transform duration-500"
+                  />
+                </div>
+                <p className="mt-3 font-display text-lg text-ink">{s.title}</p>
+                <p className="font-sans text-sm text-ink/60">
+                  {s.venue} · {s.dateObj.getFullYear()}
+                </p>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* About teaser */}
+      <section className="py-20 px-6">
+        <div className="mx-auto max-w-4xl grid gap-10 sm:grid-cols-[1fr_2fr] items-center">
+          <div className="relative aspect-square rounded-full overflow-hidden">
+            <Image src="/portrait.jpg" alt="Portrait of [name]" fill sizes="(min-width:640px) 30vw, 60vw" className="object-cover" />
+          </div>
+          <div>
+            <h2 className="font-display text-3xl text-jacaranda-800">
+              Hi, I'm {site.photographer}
+            </h2>
+            <p className="mt-4 font-sans text-ink/80 leading-relaxed">
+              Based in Pretoria, I blend guided portraits with documentary storytelling to capture the real 
+              energy of your celebration. Couples work with me for effortless direction and timeless imagery that 
+              never feels stiff or overly posed.
+            </p>
+            <Link href="/about" className="mt-6 inline-block font-sans text-jacaranda-600 hover:underline">
+              More about me →
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA band */}
+      <section className="bg-jacaranda-700 text-white py-16 px-6 text-center">
+        <h2 className="font-display text-3xl">Planning your day?</h2>
+        <p className="mt-3 text-jacaranda-100">I take on a limited number of weddings each season.</p>
+        <Link href="/contact" className="mt-6 inline-flex rounded-full bg-white text-jacaranda-800 px-7 py-3 font-sans font-medium hover:bg-jacaranda-50">
+          Check my availability
+        </Link>
+      </section>
+    </>
+  )
+}
+
+function slugFor(s: { title: string }) {
+  return s.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
 }

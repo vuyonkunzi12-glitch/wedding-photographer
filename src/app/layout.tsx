@@ -16,7 +16,7 @@ const fraunces = localFont({
 
 // Inter variable font
 const inter = localFont({
-  src: "./fonts/interVariable.woff2",
+  src: "./fonts/InterVariable.woff2",
   variable: "--font-inter",
   display: "swap",
   weight: "100 900",
